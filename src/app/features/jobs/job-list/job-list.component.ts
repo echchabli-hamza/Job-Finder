@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { JobService } from '../../../core/services/job.service';
 import { Job, JobSearchParams } from '../../../core/models/job.model';
@@ -7,8 +7,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { Store } from '@ngrx/store';
 import { selectIsAuthenticated } from '../../../store/auth/auth.selectors';
-// TODO: Import favorites actions
-// import { addFavorite } from '../../../../store/favorites/favorites.actions';
+// import { addFavorite } from '../../../store/favorites/favorites.actions';
 
 @Component({
     selector: 'app-job-list',
@@ -16,60 +15,87 @@ import { selectIsAuthenticated } from '../../../store/auth/auth.selectors';
     imports: [CommonModule, JobSearchComponent, LoadingSpinnerComponent, PaginationComponent],
     template: `
     <div class="container mt-4">
-      <h1 class="mb-4">Trouver un emploi</h1>
+      <h1 class="mb-4 text-center">Trouvez votre prochain emploi</h1>
       
       <app-job-search (search)="onSearch($event)"></app-job-search>
 
       <app-loading-spinner *ngIf="loading"></app-loading-spinner>
       
-      <div *ngIf="!loading && jobs.length > 0">
-        <h3 class="mb-3">{{ totalResults }} offres trouvées</h3>
+      <div *ngIf="!loading && hasSearched">
+        <h3 class="mb-4">{{ jobs.length }} offres trouvées</h3>
         
-        <div class="list-group mb-4">
-          <div *ngFor="let job of jobs" class="list-group-item list-group-item-action flex-column align-items-start p-4 mb-3 border rounded shadow-sm">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1 text-primary">{{ job.title }}</h5>
-              <small class="text-muted">{{ job.created | date:'dd/MM/yyyy' }}</small>
-            </div>
-            <p class="mb-1 fw-bold">{{ job.company.display_name }} - {{ job.location.display_name }}</p>
-            <p class="mb-1">{{ job.description | slice:0:200 }}...</p>
-            <div class="mt-3">
-              <a [href]="job.redirect_url" target="_blank" class="btn btn-sm btn-outline-primary me-2">Voir l'offre</a>
-              
-              <ng-container *ngIf="isAuthenticated$ | async">
-                <button class="btn btn-sm btn-outline-danger me-2" (click)="addToFavorites(job)">
-                  <i class="bi bi-heart"></i> Favoris
-                </button>
-                <button class="btn btn-sm btn-outline-secondary" (click)="trackApplication(job)">
-                  <i class="bi bi-briefcase"></i> Suivre
-                </button>
-              </ng-container>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <div *ngFor="let job of jobs" class="col">
+            <div class="card h-100 shadow-sm hover-shadow transition-all">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h5 class="card-title text-primary mb-0">{{ job.title }}</h5>
+                  <span *ngIf="job.remote" class="badge bg-success rounded-pill">Remote</span>
+                </div>
+                
+                <h6 class="card-subtitle mb-2 text-muted">
+                  <i class="bi bi-building me-1"></i> {{ job.company }}
+                </h6>
+                <p class="card-text text-muted small mb-2">
+                  <i class="bi bi-geo-alt me-1"></i> {{ job.location }}
+                </p>
+                <div class="mb-3">
+                  <span *ngFor="let tag of job.tags.slice(0, 3)" class="badge bg-light text-dark me-1 border">{{ tag }}</span>
+                </div>
+                
+                <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                   <small class="text-muted">{{ job.date | date:'dd/MM/yyyy' }}</small>
+                   <div>
+                      <a [href]="job.url" target="_blank" class="btn btn-sm btn-outline-primary me-2">Voir</a>
+                      <ng-container *ngIf="isAuthenticated$ | async">
+                        <button class="btn btn-sm btn-outline-danger" (click)="addToFavorites(job)" title="Ajouter aux favoris">
+                          <i class="bi bi-heart"></i>
+                        </button>
+                      </ng-container>
+                   </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <app-pagination 
-          [currentPage]="currentParams.page" 
-          [totalPages]="totalPages" 
-          (pageChange)="onPageChange($event)">
-        </app-pagination>
+        <div *ngIf="jobs.length > 0" class="mt-5">
+           <div class="d-flex justify-content-center gap-2">
+              <button class="btn btn-outline-secondary" [disabled]="currentParams.page <= 1" (click)="onPageChange(currentParams.page - 1)">Précédent</button>
+              <span class="align-self-center">Page {{ currentParams.page }}</span>
+              <button class="btn btn-outline-secondary" (click)="onPageChange(currentParams.page + 1)">Suivant</button>
+           </div>
+        </div>
       </div>
 
-      <div *ngIf="!loading && hasSearched && jobs.length === 0" class="alert alert-info text-center">
-        Aucune offre ne correspond à vos critères. Essayez d'autres mots-clés.
+      <div *ngIf="!loading && hasSearched && jobs.length === 0" class="alert alert-info text-center mt-4">
+        Aucune offre ne correspond à vos critères sur cette page. Essayez d'autres mots-clés ou naviguez vers d'autres pages.
       </div>
+       
+       <div *ngIf="!hasSearched && !loading" class="text-center mt-5 text-muted">
+          <i class="bi bi-search display-1"></i>
+          <p class="lead mt-3">Lancez une recherche pour voir les offres d'emploi.</p>
+       </div>
     </div>
-  `
+  `,
+    styles: [`
+    .hover-shadow:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+      transition: all .3s ease-in-out;
+    }
+    .transition-all {
+       transition: all .3s ease-in-out;
+    }
+  `]
 })
-export class JobListComponent {
+export class JobListComponent implements OnInit {
     private jobService = inject(JobService);
     private store = inject(Store);
 
     jobs: Job[] = [];
     loading = false;
     hasSearched = false;
-    totalResults = 0;
-    totalPages = 0;
 
     currentParams: JobSearchParams = {
         what: '',
@@ -78,6 +104,11 @@ export class JobListComponent {
     };
 
     isAuthenticated$ = this.store.select(selectIsAuthenticated);
+
+    ngOnInit(): void {
+        // Load jobs on component initialization
+        this.loadJobs();
+    }
 
     onSearch(params: JobSearchParams): void {
         this.currentParams = params;
@@ -94,14 +125,9 @@ export class JobListComponent {
         this.hasSearched = true;
 
         this.jobService.searchJobs(this.currentParams).subscribe({
-            next: (response) => {
-                this.jobs = response.results;
-                // Adzuna API handling for total results might be tricky with client filter
-                // We'll just assume there might be more pages if we got results
-                this.totalResults = response.count || this.jobs.length;
-                this.totalPages = Math.ceil(this.totalResults / 10); // Assuming 10 items per page
+            next: (jobs) => {
+                this.jobs = jobs;
                 this.loading = false;
-                // Scroll to top
                 window.scrollTo(0, 0);
             },
             error: (err) => {
@@ -115,10 +141,5 @@ export class JobListComponent {
     addToFavorites(job: Job): void {
         // TODO: Implement favorites logic
         console.log('Add to favorites', job);
-    }
-
-    trackApplication(job: Job): void {
-        // TODO: Implement application tracking logic
-        console.log('Track application', job);
     }
 }

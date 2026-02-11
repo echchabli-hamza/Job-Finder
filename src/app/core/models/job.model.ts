@@ -1,25 +1,33 @@
 export interface Job {
-    id: string; // Adzuna uses string IDs
+    id: string; // "slug" from Arbeitnow
     title: string;
-    company: {
-        display_name: string;
-    };
-    location: {
-        display_name: string;
-    };
+    company: string; // "company_name" from Arbeitnow
+    location: string;
     description: string;
-    created: string; // ISO date string
-    redirect_url: string;
-    salary_min?: number;
-    salary_max?: number;
-    contract_type?: string;
-    __seen?: boolean; // For tracking
+    url: string; // "url" from Arbeitnow
+    date: number; // "created_at" timestamp
+    remote: boolean;
+    tags: string[];
+    job_types: string[];
 }
 
 export interface JobSearchResponse {
-    results: Job[];
-    count: number;
-    mean_salary?: number;
+    data: ArbeitnowJob[];
+    links: any;
+    meta: any;
+}
+
+export interface ArbeitnowJob {
+    slug: string;
+    company_name: string;
+    title: string;
+    description: string;
+    remote: boolean;
+    url: string;
+    tags: string[];
+    job_types: string[];
+    location: string;
+    created_at: number;
 }
 
 export interface JobSearchParams {

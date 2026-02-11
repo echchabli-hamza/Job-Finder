@@ -8,37 +8,37 @@ import { Job, JobSearchParams, JobSearchResponse } from '../models/job.model';
 })
 export class JobService {
     private http = inject(HttpClient);
-    // Using Adzuna API
-    private appId = '236d2673';
-    private appKey = 'c7e8417c800877a5ea759e6c107293b2';
-    private apiUrl = 'https://api.adzuna.com/v1/api/jobs/fr/search';
+    // Using Arbeitnow API
+    private apiUrl = 'https://www.arbeitnow.com/api/job-board-api';
 
-    searchJobs(params: JobSearchParams): Observable<JobSearchResponse> {
+    searchJobs(params: JobSearchParams): Observable<Job[]> {
         const page = params.page || 1;
-        const what = encodeURIComponent(params.what);
-        const where = encodeURIComponent(params.where);
 
-        const url = `${this.apiUrl}/${page}?app_id=${this.appId}&app_key=${this.appKey}&what=${what}&where=${where}&content-type=application/json`;
-
-        return this.http.get<JobSearchResponse>(url).pipe(
+        return this.http.get<JobSearchResponse>(`${this.apiUrl}?page=${page}`).pipe(
             map(response => {
-                // Filter results where title strictly contains the keywords (case insensitive)
-                // Adzuna search is broader, so we refine it as per requirements
-                const keywords = params.what.toLowerCase().split(' ');
-                const filteredResults = response.results.filter(job => {
-                    const title = job.title.toLowerCase();
-                    return keywords.every(keyword => title.includes(keyword));
-                });
+                // Map Arbeitnow format to our unified Job model
+                const jobs: Job[] = response.data.map(item => ({
+                    id: item.slug,
+                    title: item.title,
+                    company: item.company_name,
+                    location: item.location,
+                    description: item.description,
+                    url: item.url,
+                    date: item.created_at * 1000, // API returns seconds, JS needs milliseconds
+                    remote: item.remote,
+                    tags: item.tags,
+                    job_types: item.job_types
+                }));
 
-                // Return filtered results but keep total count from API (or adjust if needed)
-                // Adjusting count might be misleading if pagination relies on API count
-                // For strict requirement, we serve filtered list. 
-                // Note: Pagination with client-side filtering on server-side pages is tricky.
-                // We will return the filtered subset.
-                return {
-                    ...response,
-                    results: filteredResults
-                };
+                // Client-side filtering
+                const whatLower = params.what.toLowerCase();
+                const whereLower = params.where.toLowerCase();
+
+                return jobs.filter(job => {
+                    const matchesWhat = !whatLower || job.title.toLowerCase().includes(whatLower);
+                    const matchesWhere = !whereLower || job.location.toLowerCase().includes(whereLower);
+                    return matchesWhat && matchesWhere;
+                });
             })
         );
     }

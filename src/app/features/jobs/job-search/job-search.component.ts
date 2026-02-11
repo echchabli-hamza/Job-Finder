@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { JobSearchParams } from '../../../core/models/job.model';
 
 @Component({
-    selector: 'app-job-search',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-job-search',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="card shadow-sm mb-4">
       <div class="card-body">
         <form (ngSubmit)="onSearch()">
@@ -21,7 +21,6 @@ import { JobSearchParams } from '../../../core/models/job.model';
                 placeholder="Titre du poste, mots-clés..." 
                 [(ngModel)]="searchParams.what"
                 name="what"
-                required
               >
             </div>
             <div class="col-md-5">
@@ -30,10 +29,9 @@ import { JobSearchParams } from '../../../core/models/job.model';
                 type="text" 
                 class="form-control" 
                 id="where" 
-                placeholder="Ville, région, code postal..." 
+                placeholder="Ville, région..." 
                 [(ngModel)]="searchParams.where"
                 name="where"
-                required
               >
             </div>
             <div class="col-md-2">
@@ -48,19 +46,17 @@ import { JobSearchParams } from '../../../core/models/job.model';
   `
 })
 export class JobSearchComponent {
-    @Output() search = new EventEmitter<JobSearchParams>();
+  @Output() search = new EventEmitter<JobSearchParams>();
 
-    searchParams: JobSearchParams = {
-        what: '',
-        where: '',
-        page: 1
-    };
+  searchParams: JobSearchParams = {
+    what: '',
+    where: '',
+    page: 1
+  };
 
-    onSearch(): void {
-        if (this.searchParams.what && this.searchParams.where) {
-            // Reset page to 1 on new search
-            this.searchParams.page = 1;
-            this.search.emit({ ...this.searchParams });
-        }
-    }
+  onSearch(): void {
+    // Reset page to 1 on new search
+    this.searchParams.page = 1;
+    this.search.emit({ ...this.searchParams });
+  }
 }

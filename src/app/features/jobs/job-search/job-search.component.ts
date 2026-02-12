@@ -55,7 +55,7 @@ export class JobSearchComponent {
   };
 
   onSearch(): void {
-    // Reset page to 1 on new search
+   
     this.searchParams.page = 1;
     this.search.emit({ ...this.searchParams });
   }

@@ -1,11 +1,11 @@
 export interface Job {
-    id: string; // "slug" from Arbeitnow
+    id: string;
     title: string;
-    company: string; // "company_name" from Arbeitnow
+    company: string;
     location: string;
     description: string;
-    url: string; // "url" from Arbeitnow
-    date: number; // "created_at" timestamp
+    url: string;
+    date: number;
     remote: boolean;
     tags: string[];
     job_types: string[];

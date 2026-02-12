@@ -1,7 +1,7 @@
 export interface Favorite {
     id: number;
-    userId: string; // Updated to match User.id type
-    offerId: string; // Adzuna ID is string
+    userId: string;
+    offerId: string;
     title: string;
     company: string;
     location: string;

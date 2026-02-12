@@ -149,7 +149,7 @@ export class ApplicationsPageComponent implements OnInit {
     user$ = this.store.select(selectCurrentUser);
 
     ngOnInit(): void {
-        // Applications are automatically loaded after login via AuthEffects
+       
     }
 
     removeApplication(application: Application): void {

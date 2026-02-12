@@ -17,13 +17,13 @@ export class AuthService {
     ) { }
 
     register(user: UserRegistration): Observable<User> {
-        // First checks if email already exists
+       
         return this.http.get<User[]>(`${this.apiUrl}?email=${user.email}`).pipe(
             switchMap(users => {
                 if (users.length > 0) {
                     return throwError(() => new Error('Email already exists'));
                 }
-                // If email doesn't exist, proceed with registration
+               
                 return this.http.post<User>(this.apiUrl, user);
             })
         );
@@ -39,7 +39,7 @@ export class AuthService {
                 if (user.password !== loginRequest.password) {
                     throw new Error('Invalid password');
                 }
-                // Return user without password
+               
                 const { password, ...userWithoutPassword } = user;
                 return userWithoutPassword as User;
             }),
@@ -58,7 +58,7 @@ export class AuthService {
     }
 
     updateProfile(user: User): Observable<User> {
-        // In a real app we would check password but here we update non-sensitive info
+       
         return this.http.patch<User>(`${this.apiUrl}/${user.id}`, user).pipe(
             tap(updatedUser => {
                 this.storageService.saveUser(updatedUser);

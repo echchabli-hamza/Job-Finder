@@ -1,7 +1,7 @@
 export interface Application {
     id: number;
     userId: string;
-    offerId: string; // Job ID from Arbeitnow
+    offerId: string;
     title: string;
     company: string;
     location: string;

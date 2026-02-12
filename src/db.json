@@ -76,7 +76,46 @@
       "company": "Cloudiax AG",
       "location": "Gudow",
       "dateAdded": "2026-02-12T10:58:47.112Z"
+    },
+    {
+      "id": "2898",
+      "userId": "822a",
+      "offerId": "ms-365-specialist-ingolstadt-184042",
+      "title": "MS 365 Specialist (m/w/d)",
+      "company": "hubside - Die Recruitingwerkstatt",
+      "location": "Ingolstadt",
+      "dateAdded": "2026-02-12T14:24:41.087Z"
+    },
+    {
+      "id": "82c1",
+      "userId": "822a",
+      "offerId": "senior-backend-full-stack-software-engineer-typescript-nestjs-munich-244989",
+      "title": "Senior Backend/Full-stack Software Engineer - TypeScript, NestJS (m/f/x)",
+      "company": "Atolls",
+      "location": "Munich, Bavaria, Germany",
+      "dateAdded": "2026-02-12T14:24:42.526Z"
     }
   ],
-  "applications": []
+  "applications": [
+    {
+      "id": "6ff9",
+      "userId": "822a",
+      "offerId": "qa-tester-web-app-saas-proptech-dresden-120119",
+      "title": "QA TESTER (M/W/D) - WEB APP / SAAS / PROPTECH",
+      "company": "Enerithm Technology GmbH",
+      "location": "Dresden",
+      "appliedDate": "2026-02-12T14:25:01.421Z",
+      "status": "applied"
+    },
+    {
+      "id": "4e17",
+      "userId": "822a",
+      "offerId": "it-anwendungsmanager-berater-campusmanagement-lemgo-287552",
+      "title": "IT-Anwendungsmanager & Berater Campusmanagement (m/w/d)",
+      "company": "Hochschul-IT-Services.nrw",
+      "location": "Lemgo",
+      "appliedDate": "2026-02-12T14:25:03.812Z",
+      "status": "applied"
+    }
+  ]
 }

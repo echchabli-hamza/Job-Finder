@@ -139,8 +139,8 @@ export class FavoritesPageComponent implements OnInit {
     user$ = this.store.select(selectCurrentUser);
 
     ngOnInit(): void {
-        // Favorites are automatically loaded after login via AuthEffects
-        // No need to dispatch loadFavorites here
+       
+       
     }
 
     removeFavorite(favorite: Favorite): void {

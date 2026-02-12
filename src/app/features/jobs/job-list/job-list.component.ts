@@ -130,11 +130,11 @@ export class JobListComponent implements OnInit {
     applications$ = this.store.select(selectAllApplications);
 
     ngOnInit(): void {
-        // Load jobs on component initialization
+       
         this.loadJobs();
         
-        // Note: Favorites are loaded automatically after login via AuthEffects
-        // No need to load them here for anonymous users
+       
+       
     }
 
     isJobFavorite(jobId: string): boolean {
@@ -156,7 +156,7 @@ export class JobListComponent implements OnInit {
     toggleFavorite(job: Job): void {
         this.currentUser$.subscribe(user => {
             if (user) {
-                // First add to NgRx store, then it will sync to JSON server via effects
+               
                 this.store.dispatch(addFavorite({ job, userId: user.id }));
             }
         }).unsubscribe();
@@ -165,7 +165,7 @@ export class JobListComponent implements OnInit {
     applyToJob(job: Job): void {
         this.currentUser$.subscribe(user => {
             if (user && !this.hasApplied(job.id)) {
-                // First add to NgRx store, then it will sync to JSON server via effects
+               
                 this.store.dispatch(addApplication({ job, userId: user.id }));
             }
         }).unsubscribe();

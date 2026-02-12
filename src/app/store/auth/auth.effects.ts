@@ -5,6 +5,7 @@ import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import * as AuthActions from './auth.actions';
+import * as FavoritesActions from '../favorites/favorites.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -24,13 +25,14 @@ export class AuthEffects {
         )
     );
 
-    loginSuccess$ = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(AuthActions.loginSuccess),
-                tap(() => this.router.navigate(['/jobs']))
-            ),
-        { dispatch: false }
+    loginSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(AuthActions.loginSuccess),
+            tap(() => this.router.navigate(['/jobs'])),
+            switchMap(() => [
+                FavoritesActions.loadFavorites()
+            ])
+        )
     );
 
     register$ = createEffect(() =>
@@ -45,25 +47,27 @@ export class AuthEffects {
         )
     );
 
-    registerSuccess$ = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(AuthActions.registerSuccess),
-                tap(() => this.router.navigate(['/login']))
-            ),
-        { dispatch: false }
+    registerSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(AuthActions.registerSuccess),
+            tap(() => this.router.navigate(['/jobs'])),
+            switchMap(() => [
+                FavoritesActions.loadFavorites()
+            ])
+        )
     );
 
-    logout$ = createEffect(
-        () =>
-            this.actions$.pipe(
-                ofType(AuthActions.logout),
-                tap(() => {
-                    this.authService.logout();
-                    this.router.navigate(['/login']);
-                })
-            ),
-        { dispatch: false }
+    logout$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(AuthActions.logout),
+            switchMap(() => [
+                FavoritesActions.clearFavorites()
+            ]),
+            tap(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+            })
+        )
     );
 
     updateProfile$ = createEffect(() =>

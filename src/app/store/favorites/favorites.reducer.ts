@@ -58,7 +58,11 @@ export const favoritesReducer = createReducer(
         ...state,
         loading: false,
         error
-    }))
+    })),
+
+    on(FavoritesActions.clearFavorites, (state) =>
+        adapter.removeAll({ ...state, loading: false, error: null })
+    )
 );
 
 export const {

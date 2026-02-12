@@ -6,8 +6,10 @@ import { JobSearchComponent } from '../job-search/job-search.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { Store } from '@ngrx/store';
-import { selectIsAuthenticated } from '../../../store/auth/auth.selectors';
-// import { addFavorite } from '../../../store/favorites/favorites.actions';
+import { selectIsAuthenticated, selectCurrentUser } from '../../../store/auth/auth.selectors';
+import { addFavorite } from '../../../store/favorites/favorites.actions';
+import { selectAllFavorites } from '../../../store/favorites/favorites.selectors';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-job-list',
@@ -48,8 +50,13 @@ import { selectIsAuthenticated } from '../../../store/auth/auth.selectors';
                    <div>
                       <a [href]="job.url" target="_blank" class="btn btn-sm btn-outline-primary me-2">Voir</a>
                       <ng-container *ngIf="isAuthenticated$ | async">
-                        <button class="btn btn-sm btn-outline-danger" (click)="addToFavorites(job)" title="Ajouter aux favoris">
-                          <i class="bi bi-heart"></i>
+                        <button 
+                          class="btn btn-sm" 
+                          [class.btn-danger]="isJobFavorite(job.id)"
+                          [class.btn-outline-danger]="!isJobFavorite(job.id)"
+                          (click)="toggleFavorite(job)" 
+                          title="Ajouter aux favoris">
+                          <i class="bi" [class.bi-heart-fill]="isJobFavorite(job.id)" [class.bi-heart]="!isJobFavorite(job.id)"></i>
                         </button>
                       </ng-container>
                    </div>
@@ -104,10 +111,32 @@ export class JobListComponent implements OnInit {
     };
 
     isAuthenticated$ = this.store.select(selectIsAuthenticated);
+    currentUser$ = this.store.select(selectCurrentUser);
+    favorites$ = this.store.select(selectAllFavorites);
 
     ngOnInit(): void {
         // Load jobs on component initialization
         this.loadJobs();
+        
+        // Note: Favorites are loaded automatically after login via AuthEffects
+        // No need to load them here for anonymous users
+    }
+
+    isJobFavorite(jobId: string): boolean {
+        let isFavorite = false;
+        this.favorites$.subscribe(favorites => {
+            isFavorite = favorites.some(fav => fav.offerId === jobId);
+        }).unsubscribe();
+        return isFavorite;
+    }
+
+    toggleFavorite(job: Job): void {
+        this.currentUser$.subscribe(user => {
+            if (user) {
+                // First add to NgRx store, then it will sync to JSON server via effects
+                this.store.dispatch(addFavorite({ job, userId: user.id }));
+            }
+        }).unsubscribe();
     }
 
     onSearch(params: JobSearchParams): void {
@@ -136,10 +165,5 @@ export class JobListComponent implements OnInit {
                 this.jobs = [];
             }
         });
-    }
-
-    addToFavorites(job: Job): void {
-        // TODO: Implement favorites logic
-        console.log('Add to favorites', job);
     }
 }

@@ -16,7 +16,7 @@ export const loadFavoritesFailure = createAction(
 
 export const addFavorite = createAction(
     '[Favorites] Add Favorite',
-    props<{ job: Job; userId: number }>()
+    props<{ job: Job; userId: string }>()
 );
 
 export const addFavoriteSuccess = createAction(
@@ -43,3 +43,5 @@ export const removeFavoriteFailure = createAction(
     '[Favorites] Remove Favorite Failure',
     props<{ error: string }>()
 );
+
+export const clearFavorites = createAction('[Favorites] Clear Favorites');

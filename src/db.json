@@ -6,8 +6,77 @@
       "lastName": "Doe",
       "email": "john.doe@example.com",
       "password": "password123"
+    },
+    {
+      "id": "822a",
+      "firstName": "test",
+      "lastName": "test",
+      "email": "test@gmail.com",
+      "password": "test56"
+    },
+    {
+      "id": "075e",
+      "firstName": "hamza",
+      "lastName": "echchabli",
+      "email": "hamza@gmail.com",
+      "password": "hamza56"
     }
   ],
-  "favoritesOffers": [],
+  "favoritesOffers": [
+    {
+      "id": "7561",
+      "userId": "822a",
+      "offerId": "qa-tester-web-app-saas-proptech-dresden-120119",
+      "title": "QA TESTER (M/W/D) - WEB APP / SAAS / PROPTECH",
+      "company": "Enerithm Technology GmbH",
+      "location": "Dresden",
+      "dateAdded": "2026-02-12T10:27:02.953Z"
+    },
+    {
+      "id": "c30d",
+      "userId": "822a",
+      "offerId": "bekleidungsdesigner-fashion-designer-ansbach-50246",
+      "title": "Bekleidungsdesigner / Fashion Designer (m/w/d)",
+      "company": "TEVEO GmbH",
+      "location": "Ansbach",
+      "dateAdded": "2026-02-12T10:27:06.053Z"
+    },
+    {
+      "id": "fd22",
+      "userId": "822a",
+      "offerId": "freelance-personalized-internet-ads-assessor-german-speaker-in-germany-berlin-170637",
+      "title": "Freelance: Personalized Internet Ads Assessor - German speaker in Germany",
+      "company": "TELUS Digital",
+      "location": "Berlin",
+      "dateAdded": "2026-02-12T10:57:49.664Z"
+    },
+    {
+      "id": "73d6",
+      "userId": "822a",
+      "offerId": "steuerberater-in-erfurt-auf-wunsch-mit-partnerperspektive-gesucht-mindestens-90000eur-342828",
+      "title": "Steuerberater (m/w/d) in Erfurt, auf Wunsch mit Partnerperspektive, gesucht - mindestens 90.000€",
+      "company": "Taxtalente.de",
+      "location": "Erfurt",
+      "dateAdded": "2026-02-12T10:57:50.986Z"
+    },
+    {
+      "id": "37cb",
+      "userId": "075e",
+      "offerId": "personalberater-bad-mergentheim-232667",
+      "title": "Personalberater (m/w/d)",
+      "company": "PERSUS Personal GMBH",
+      "location": "Bad Mergentheim",
+      "dateAdded": "2026-02-12T10:58:45.697Z"
+    },
+    {
+      "id": "bf10",
+      "userId": "075e",
+      "offerId": "corporate-communications-manager-presse-interne-kommunikation-teilzeit-25-std-gudow-406477",
+      "title": "Corporate Communications Manager (m/w/d) - Presse & interne Kommunikation - Teilzeit 25 Std.",
+      "company": "Cloudiax AG",
+      "location": "Gudow",
+      "dateAdded": "2026-02-12T10:58:47.112Z"
+    }
+  ],
   "applications": []
 }

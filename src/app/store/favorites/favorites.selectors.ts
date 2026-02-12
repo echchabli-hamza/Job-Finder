@@ -1,12 +1,14 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { FavoritesState, selectAll } from './favorites.reducer';
+import { FavoritesState, adapter } from './favorites.reducer';
 
 export const selectFavoritesState = createFeatureSelector<FavoritesState>('favorites');
 
-export const selectAllFavorites = createSelector(
-    selectFavoritesState,
-    selectAll
-);
+export const {
+    selectIds: selectFavoriteIds,
+    selectEntities: selectFavoriteEntities,
+    selectAll: selectAllFavorites,
+    selectTotal: selectFavoritesTotal,
+} = adapter.getSelectors(selectFavoritesState);
 
 export const selectFavoritesLoading = createSelector(
     selectFavoritesState,

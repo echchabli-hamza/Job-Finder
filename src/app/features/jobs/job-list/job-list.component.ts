@@ -9,6 +9,8 @@ import { Store } from '@ngrx/store';
 import { selectIsAuthenticated, selectCurrentUser } from '../../../store/auth/auth.selectors';
 import { addFavorite } from '../../../store/favorites/favorites.actions';
 import { selectAllFavorites } from '../../../store/favorites/favorites.selectors';
+import { addApplication } from '../../../store/applications/applications.actions';
+import { selectAllApplications } from '../../../store/applications/applications.selectors';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -47,8 +49,10 @@ import { map } from 'rxjs/operators';
                 
                 <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
                    <small class="text-muted">{{ job.date | date:'dd/MM/yyyy' }}</small>
-                   <div>
-                      <a [href]="job.url" target="_blank" class="btn btn-sm btn-outline-primary me-2">Voir</a>
+                   <div class="d-flex gap-2">
+                      <a [href]="job.url" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye me-1"></i>Voir
+                      </a>
                       <ng-container *ngIf="isAuthenticated$ | async">
                         <button 
                           class="btn btn-sm" 
@@ -57,6 +61,16 @@ import { map } from 'rxjs/operators';
                           (click)="toggleFavorite(job)" 
                           title="Ajouter aux favoris">
                           <i class="bi" [class.bi-heart-fill]="isJobFavorite(job.id)" [class.bi-heart]="!isJobFavorite(job.id)"></i>
+                        </button>
+                        <button 
+                          class="btn btn-sm" 
+                          [class.btn-success]="hasApplied(job.id)"
+                          [class.btn-outline-success]="!hasApplied(job.id)"
+                          [disabled]="hasApplied(job.id)"
+                          (click)="applyToJob(job)" 
+                          title="Postuler">
+                          <i class="bi bi-briefcase me-1"></i>
+                          {{ hasApplied(job.id) ? 'Postulé' : 'Postule' }}
                         </button>
                       </ng-container>
                    </div>
@@ -113,6 +127,7 @@ export class JobListComponent implements OnInit {
     isAuthenticated$ = this.store.select(selectIsAuthenticated);
     currentUser$ = this.store.select(selectCurrentUser);
     favorites$ = this.store.select(selectAllFavorites);
+    applications$ = this.store.select(selectAllApplications);
 
     ngOnInit(): void {
         // Load jobs on component initialization
@@ -130,11 +145,28 @@ export class JobListComponent implements OnInit {
         return isFavorite;
     }
 
+    hasApplied(jobId: string): boolean {
+        let hasApplied = false;
+        this.applications$.subscribe(applications => {
+            hasApplied = applications.some(app => app.offerId === jobId);
+        }).unsubscribe();
+        return hasApplied;
+    }
+
     toggleFavorite(job: Job): void {
         this.currentUser$.subscribe(user => {
             if (user) {
                 // First add to NgRx store, then it will sync to JSON server via effects
                 this.store.dispatch(addFavorite({ job, userId: user.id }));
+            }
+        }).unsubscribe();
+    }
+
+    applyToJob(job: Job): void {
+        this.currentUser$.subscribe(user => {
+            if (user && !this.hasApplied(job.id)) {
+                // First add to NgRx store, then it will sync to JSON server via effects
+                this.store.dispatch(addApplication({ job, userId: user.id }));
             }
         }).unsubscribe();
     }

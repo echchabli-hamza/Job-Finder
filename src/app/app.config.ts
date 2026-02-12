@@ -11,6 +11,8 @@ import { authReducer } from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
 import { favoritesReducer } from './store/favorites/favorites.reducer';
 import { FavoritesEffects } from './store/favorites/favorites.effects';
+import { applicationsReducer } from './store/applications/applications.reducer';
+import { ApplicationsEffects } from './store/applications/applications.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,9 +20,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideStore({ 
       auth: authReducer,
-      favorites: favoritesReducer 
+      favorites: favoritesReducer,
+      applications: applicationsReducer
     }),
-    provideEffects([AuthEffects, FavoritesEffects]),
+    provideEffects([AuthEffects, FavoritesEffects, ApplicationsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false })
   ]
 };

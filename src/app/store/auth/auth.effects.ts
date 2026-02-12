@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
-import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { of, EMPTY } from 'rxjs';
+import { map, catchError, switchMap, tap, mergeMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import * as AuthActions from './auth.actions';
 import * as FavoritesActions from '../favorites/favorites.actions';
+import * as ApplicationsActions from '../applications/applications.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -29,8 +30,9 @@ export class AuthEffects {
         this.actions$.pipe(
             ofType(AuthActions.loginSuccess),
             tap(() => this.router.navigate(['/jobs'])),
-            switchMap(() => [
-                FavoritesActions.loadFavorites()
+            mergeMap(() => [
+                FavoritesActions.loadFavorites(),
+                ApplicationsActions.loadApplications()
             ])
         )
     );
@@ -51,8 +53,9 @@ export class AuthEffects {
         this.actions$.pipe(
             ofType(AuthActions.registerSuccess),
             tap(() => this.router.navigate(['/jobs'])),
-            switchMap(() => [
-                FavoritesActions.loadFavorites()
+            mergeMap(() => [
+                FavoritesActions.loadFavorites(),
+                ApplicationsActions.loadApplications()
             ])
         )
     );
@@ -60,13 +63,14 @@ export class AuthEffects {
     logout$ = createEffect(() =>
         this.actions$.pipe(
             ofType(AuthActions.logout),
-            switchMap(() => [
-                FavoritesActions.clearFavorites()
-            ]),
             tap(() => {
                 this.authService.logout();
                 this.router.navigate(['/login']);
-            })
+            }),
+            mergeMap(() => [
+                FavoritesActions.clearFavorites(),
+                ApplicationsActions.clearApplications()
+            ])
         )
     );
 

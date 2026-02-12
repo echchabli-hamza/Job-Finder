@@ -6,12 +6,11 @@ import { updateProfile } from '../../../store/auth/auth.actions';
 import { selectCurrentUser, selectAuthLoading, selectAuthError } from '../../../store/auth/auth.selectors';
 import { User } from '../../../core/models/user.model';
 import { take } from 'rxjs/operators';
-import { FavoritesListComponent } from '../../favorites/favorites-list/favorites-list.component';
 
 @Component({
     selector: 'app-profile',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FavoritesListComponent],
+    imports: [CommonModule, ReactiveFormsModule],
     template: `
     <div class="container mt-5">
       <div class="row justify-content-center">
@@ -88,8 +87,6 @@ import { FavoritesListComponent } from '../../favorites/favorites-list/favorites
               </form>
             </div>
           </div>
-          
-          <app-favorites-list></app-favorites-list>
         </div>
       </div>
     </div>
